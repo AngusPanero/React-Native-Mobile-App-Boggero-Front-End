@@ -1,9 +1,14 @@
-import { View, ImageBackground, StyleSheet, Image, Pressable, Text } from "react-native";
+import { View, ImageBackground, StyleSheet, Image, Pressable, Text, TextInput, LayoutAnimation, UIManager, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig.js";
 import axios from "axios";
+
+// Activo Para android que por defecto viene desactivado el UIManager
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const LoginScreen = ({ navigation }) => {
   const [ isAdmin, setIsAdmin ] = useState(false)
@@ -16,9 +21,9 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true)
       const userCredentials = await signInWithEmailAndPassword(auth, email, password)
-      const idToken = await userCredentials.getIdToken()
+      const idToken = await userCredentials.user.getIdToken()
 
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {idToken})
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/login`, {idToken})
       if(response.status === 200){
         navigation.replace("Admin")
       }
@@ -36,19 +41,44 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.root}>
-      <ImageBackground source={require("../../assets/cocina-minimalista-2.avif")} style={styles.background} resizeMode="cover" /> 
+      <ImageBackground
+        source={require("../../assets/cocina-minimalista-2.avif")}
+        style={styles.background}
+        resizeMode="cover"
+      />
 
       <SafeAreaView style={styles.safeArea}>
         <Image style={styles.logo} source={require("../../assets/boggero.png")} />
 
-        <Pressable style={({ pressed }) => [ styles.buttonBase, pressed && styles.buttonPressed ]} onPress={() => navigation.replace("Home")} >
-          <Text style={styles.buttonText}>Administrador</Text>
-        </Pressable>
+        {!isAdmin && (
+          <>
+            {/* BOTÓN ADMIN */}
+            <Pressable style={styles.buttonBase} onPress={() => {LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(true)}}>
+              <Text style={styles.buttonText}>Administrador</Text>
+            </Pressable>
 
-        <Pressable style={({ pressed }) => [ styles.buttonBase, pressed && styles.buttonPressed ]} onPress={() => navigation.replace("Houses")} >
-          <Text style={styles.buttonText}>Cliente</Text>
-        </Pressable>
+            {/* BOTÓN CLIENTE */}
+            <Pressable style={styles.buttonBase} onPress={() => navigation.replace("Houses")}>
+              <Text style={styles.buttonText}>Cliente</Text>
+            </Pressable>
+          </>
+        )}
 
+        {isAdmin && (
+          <View style={styles.form}>
+            <TextInput placeholder="Email" placeholderTextColor="#ddd" style={styles.input} value={email} onChangeText={setEmail} autoCapitalize="none" />
+
+            <TextInput placeholder="Contraseña" placeholderTextColor="#ddd" style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
+
+            <Pressable style={styles.buttonBase} onPress={handleLogin} disabled={loading}>
+              <Text style={styles.buttonText}> {loading ? "Ingresando..." : "Entrar"} </Text>
+            </Pressable>
+
+            <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
+              <Text style={styles.backText}>← Volver</Text>
+            </Pressable>
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -79,7 +109,8 @@ const styles = StyleSheet.create({
   },
 
   buttonBase: {
-    width: 200,
+    width: "100%",
+    maxWidth: 260,
     height: 36,
     borderRadius: 14,
   
@@ -99,6 +130,9 @@ const styles = StyleSheet.create({
   },
   
   buttonText: {
+    alignItems: "center",
+    textAlign: "center",
+    width: "100%",
     color: "#fff",  
     fontSize: 15,
     fontWeight: "500",
@@ -108,6 +142,30 @@ const styles = StyleSheet.create({
   
   buttonPressed: {
     transform: [{ scale: 0.96 }],
+    opacity: 0.8,
+  },
+
+  form: {
+    width: 260,
+    marginTop: 20,
+    gap: 14,
+  },
+  
+  input: {
+    height: 46,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+    color: "#fff",
+    fontSize: 14,
+  },
+  
+  backText: {
+    color: "#fff",
+    textAlign: "center",
+    marginTop: 10,
     opacity: 0.8,
   },
 });
