@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ gestureEnabled: true, gestureDirection: "horizontal" }} >
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Admin" component={Admin} />
             <Stack.Screen name="Home" component={HomeScreen} />

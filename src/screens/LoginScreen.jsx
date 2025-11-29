@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig.js";
 import axios from "axios";
+import Footer from "../components/Footer.jsx";
 
 // Activo Para android que por defecto viene desactivado el UIManager
 if (Platform.OS === "android") {
@@ -31,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
         setError(true)
         console.error( `Error al Iniciar Sesion! 🔴`);
         alert(
-          error.response?.data?.message || "Credenciales incorrectas"
+          error.response?.message || "Credenciales incorrectas"
         );
     } finally {
         setLoading(false)
@@ -41,14 +42,16 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.root}>
-      <ImageBackground
-        source={require("../../assets/cocina-minimalista-2.avif")}
-        style={styles.background}
-        resizeMode="cover"
-      />
-
+      
+        <ImageBackground source={require("../../assets/cocina-minimalista-2.avif")} style={styles.background} resizeMode="cover" />
+      
       <SafeAreaView style={styles.safeArea}>
-        <Image style={styles.logo} source={require("../../assets/boggero.png")} />
+
+        <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
+          <Image style={styles.logo} source={require("../../assets/boggero.png")} />
+        </Pressable>
+
+        <Text style={styles.slogan}>Tu nuevo hogar ahora más cerca de tus manos.</Text>
 
         {!isAdmin && (
           <>
@@ -66,20 +69,24 @@ const LoginScreen = ({ navigation }) => {
 
         {isAdmin && (
           <View style={styles.form}>
+            
             <TextInput placeholder="Email" placeholderTextColor="#ddd" style={styles.input} value={email} onChangeText={setEmail} autoCapitalize="none" />
 
             <TextInput placeholder="Contraseña" placeholderTextColor="#ddd" style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
 
+            {/* BOTÓN ENTRAR */}
             <Pressable style={styles.buttonBase} onPress={handleLogin} disabled={loading}>
               <Text style={styles.buttonText}> {loading ? "Ingresando..." : "Entrar"} </Text>
             </Pressable>
 
             <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
+            <Text style={styles.access}>Acceso único para administradores.</Text>
               <Text style={styles.backText}>← Volver</Text>
             </Pressable>
           </View>
         )}
       </SafeAreaView>
+      <Footer />
     </View>
   );
 };
@@ -90,10 +97,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "#000",
+    position: "relative"
   },
 
   background: {
     ...StyleSheet.absoluteFillObject,
+    zIndex:0
   },
 
   safeArea: {
@@ -106,6 +115,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 165,
     resizeMode: "contain",
+    marginBottom:15
   },
 
   buttonBase: {
@@ -129,6 +139,22 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   
+  slogan: {
+    marginBottom: 30,
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "white",
+  },
+
+  access: {
+    textAlign: "center",
+    marginTop: 15,
+    marginBottom: 30,
+    fontWeight: "bold",
+    fontSize: 20,
+    color: "white",
+  },
+
   buttonText: {
     alignItems: "center",
     textAlign: "center",
@@ -148,6 +174,7 @@ const styles = StyleSheet.create({
   form: {
     width: 260,
     marginTop: 20,
+    marginBottom: 65,
     gap: 14,
   },
   

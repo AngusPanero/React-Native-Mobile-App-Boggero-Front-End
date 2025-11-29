@@ -6,6 +6,7 @@ const HousesScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <Text>Listado de Propiedades</Text>
             <Button title="Ir a Detalle" onPress={() => navigation.navigate("HouseDetail")} />
+            <Button title="Login" onPress={() => navigation.navigate("Login")} />
         </SafeAreaView>
     )
 }
