@@ -1,10 +1,11 @@
-import { View, ImageBackground, StyleSheet, Image, Pressable, Text, TextInput, LayoutAnimation, UIManager, Platform } from "react-native";
+import { View, ImageBackground, Button, StyleSheet, Image, Pressable, Text, TextInput, LayoutAnimation, UIManager, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig.js";
 import axios from "axios";
 import Footer from "../components/Footer.jsx";
+import Admin from "./Admin.jsx";
 
 // Activo Para android que por defecto viene desactivado el UIManager
 if (Platform.OS === "android") {
@@ -26,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
 
       const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/login`, {idToken})
       if(response.status === 200){
-        navigation.replace("Admin")
+        navigation.navigate("Admin")
       }
     } catch (error) {
         setError(true)
@@ -46,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
         <ImageBackground source={require("../../assets/cocina-minimalista-2.avif")} style={styles.background} resizeMode="cover" />
       
       <SafeAreaView style={styles.safeArea}>
-
+      <Button title="Admin Test" onPress={() => navigation.navigate("Admin")} />
         <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
           <Image style={styles.logo} source={require("../../assets/boggero.png")} />
         </Pressable>
