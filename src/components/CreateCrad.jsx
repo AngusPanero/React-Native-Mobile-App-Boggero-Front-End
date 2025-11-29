@@ -1,62 +1,118 @@
-import { View, TextInput, Text, Pressable, StyleSheet } from "react-native"
+import { View, TextInput, Image, Text, Pressable, StyleSheet, ScrollView } from "react-native"
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 
-const CreateCard = ({ houses, handleSetValues, pickImages, axios }) => {
+const CreateCard = ({ houses, handleSetValues, pickImages, deleteImages, closeModal, handleSubmit }) => {
     return(
-        <View>
-            <TextInput style={styles.title} placeholder="Título" placeholderTextColor={"#ddd"} value={houses.title} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.direction} placeholder="Dirección" placeholderTextColor={"#ddd"} value={houses.direction} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.ubication} placeholder="Ubicación" placeholderTextColor={"#ddd"} value={houses.ubication} onChangeText={() => handleSetValues} />
+        <ScrollView>
+            <View style={styles.formCard}>
+                <TextInput style={styles.title} placeholder="Título" placeholderTextColor={"#ddd"} value={houses.title} onChangeText={(text) => handleSetValues("title", text)} />
+                <TextInput style={styles.direction} placeholder="Dirección" placeholderTextColor={"#ddd"} value={houses.direction} onChangeText={(text) => handleSetValues("direction", text)} />
+                <TextInput style={styles.ubication} placeholder="Ubicación" placeholderTextColor={"#ddd"} value={houses.ubication} onChangeText={(text) => handleSetValues("ubication", text)} />
 
-            <Picker selectedValue={houses.operation}>
-                <Picker.Item label="-- Operación --" value="" />
-                <Picker.Item label="Venta" value="venta" />
-                <Picker.Item label="Alquiler" value="alquiler" />
-            </Picker>
+                <View style={styles.pickerWrapper}>
+                    <Picker selectedValue={houses.operation} onValueChange={(value) => handleSetValues("operation", value)} style={styles.picker}>
+                        <Picker.Item label="-- Operación --" value="" />
+                        <Picker.Item label="Venta" value="venta" />
+                        <Picker.Item label="Alquiler" value="alquiler" />
+                    </Picker>
+                </View>
 
-            <TextInput style={styles.price} placeholder="Precio" placeholderTextColor={"#ddd"} value={houses.price} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.typeOfHouse} placeholder="Título" placeholderTextColor={"#ddd"} value={houses.typeOfHouse} onChangeText={() => handleSetValues} />
+                <TextInput style={styles.price} placeholder="Precio" placeholderTextColor={"#ddd"} value={houses.price} onChangeText={(text) => handleSetValues("price", text)} />
+                <TextInput style={styles.typeOfHouse} placeholder="Tipo de Casa" placeholderTextColor={"#ddd"} value={houses.typeOfHouse} onChangeText={(text) => handleSetValues("typeOfHouse", text)} />
 
-            <TextInput style={styles.textArea} placeholder="Descripción" value={houses.description} onChangeText={() => handleSetValues} multiline numberOfLines={4} textAlignVertical="top" />    
+                <TextInput style={styles.textArea} placeholder="Descripción" value={houses.description} onChangeText={(text) => handleSetValues("description", text)} multiline numberOfLines={4} textAlignVertical="top" />    
 
-            <TextInput style={styles.condition} placeholder="Condición" placeholderTextColor={"#ddd"} value={houses.condition} onChangeText={() => handleSetValues} />    
-            <TextInput style={styles.ambients} placeholder="Ambientes" placeholderTextColor={"#ddd"} value={houses.ambients} onChangeText={() => handleSetValues} />    
-            <TextInput style={styles.bathrooms} placeholder="Baños" placeholderTextColor={"#ddd"} value={houses.bathrooms} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.years} placeholder="Años" placeholderTextColor={"#ddd"} value={houses.years} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.taxes} placeholder="Expensas" placeholderTextColor={"#ddd"} value={houses.taxes} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.covered} placeholder="Metros cubiertos (m²)" placeholderTextColor={"#ddd"} value={houses.covered} onChangeText={() => handleSetValues} />
-            <TextInput style={styles.uncovered} placeholder="Metros descubiertos (m²)" placeholderTextColor={"#ddd"} value={houses.uncovered} onChangeText={() => handleSetValues} />                    
-            <TextInput style={styles.area} placeholder="Area" placeholderTextColor={"#ddd"} value={houses.area} onChangeText={() => handleSetValues} />    
+                <TextInput style={styles.condition} placeholder="Condición" placeholderTextColor={"#ddd"} value={houses.condition} onChangeText={(text) => handleSetValues("condition", text)} />    
+                <TextInput style={styles.ambients} placeholder="Ambientes" placeholderTextColor={"#ddd"} value={houses.ambients} onChangeText={(text) => handleSetValues("ambients", text)} />    
+                <TextInput style={styles.bathrooms} placeholder="Baños" placeholderTextColor={"#ddd"} value={houses.bathrooms} onChangeText={(text) => handleSetValues("bathrooms", text)} />
+                <TextInput style={styles.years} placeholder="Años" placeholderTextColor={"#ddd"} value={houses.years} onChangeText={(text) => handleSetValues("years", text)} />
+                <TextInput style={styles.taxes} placeholder="Expensas" placeholderTextColor={"#ddd"} value={houses.taxes} onChangeText={(text) => handleSetValues("taxes", text)} />
+                <TextInput style={styles.covered} placeholder="Metros cubiertos (m²)" placeholderTextColor={"#ddd"} value={houses.covered} onChangeText={(text) => handleSetValues("covered", text)} />
+                <TextInput style={styles.uncovered} placeholder="Metros descubiertos (m²)" placeholderTextColor={"#ddd"} value={houses.uncovered} onChangeText={(text) => handleSetValues("uncovered", text)} />                    
+                <TextInput style={styles.area} placeholder="Area" placeholderTextColor={"#ddd"} value={houses.area} onChangeText={(text) => handleSetValues("area", text)} />    
+                <TextInput style={styles.maps} placeholder="Link Google Maps" placeholderTextColor={"#ddd"} value={houses.maps} onChangeText={(text) => handleSetValues("maps", text)} />        
 
-            <Pressable style={styles.imageButton} onPress={pickImages}>
-                <Text style={styles.imageButtonText}>Seleccionar Imágenes</Text>
-            </Pressable>
+                <Pressable style={styles.imageButton} onPress={pickImages}>
+                    <Text style={styles.imageButtonText}>Seleccionar Imágenes</Text>
+                </Pressable>
 
-            <View style={styles.previewContainer}>
-                {houses?.imageUrl?.map((img) => (
-                    <Image key={img} source={{ uri: img }} style={styles.preview} />))
-                }
-            </View> 
+                <View style={styles.previewContainer}>
+                    {houses?.imageUrl?.map((img, index) => (
+                        <View key={index} style={styles.imageWrapper}>
+                        <Image source={{ uri: img }} style={styles.preview} />
 
-            <Pressable style={styles.create} onPress={axios}>
-                <Text style={styles.imageButtonText}>Crear</Text>
-            </Pressable>       
-        </View>
+                        <Pressable
+                            style={styles.deletePhoto}
+                            onPress={() => deleteImages(index)}
+                        >
+                            <Text style={styles.deletePhoto}>✕</Text>
+                        </Pressable>
+                        </View>
+                    ))}
+                </View>
+
+                <Pressable style={styles.create} onPress={handleSubmit}>
+                    <Text style={styles.imageButtonText}>Crear</Text>
+                </Pressable>  
+
+                <Pressable style={styles.closeButton} onPress={closeModal}>
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                </Pressable>      
+            </View>
+        </ScrollView>
     )
 }
 
 export default CreateCard
 
+const glassInput = {
+    width: "100%",
+    height: 48,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginBottom: 14,
+    color: "#fff",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+};
+
 const styles = StyleSheet.create({
-    /*  CONTENEDOR GENERAL  */
-    container: {
-        width: "100%",
-        paddingHorizontal: 20,
+
+
+    /* ===== SCROLL GENERAL ===== */
+    scroll: {
+        paddingHorizontal: 16,
         paddingTop: 20,
+        paddingBottom: 120,
     },
 
-    /*  INPUTS TIPO GLASS  */
+    /* ===== TARJETA PRINCIPAL ===== */
+    formCard: {
+        marginTop: 40,
+        marginBottom: 320,
+        alignSelf: "center",
+        alignItems: "center",
+        width: "90%",
+        backgroundColor: "rgba(0,0,0,0.35)",
+        borderRadius: 26,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.18)",
+    },
+
+    /* ===== TÍTULO ===== */
+    formTitle: {
+        color: "#fff",
+        fontSize: 20,
+        fontWeight: "700",
+        textAlign: "center",
+        marginBottom: 22,
+        letterSpacing: 0.5,
+    },
+
+    /* ===== INPUT BASE ===== */
     title: glassInput,
     direction: glassInput,
     ubication: glassInput,
@@ -70,83 +126,106 @@ const styles = StyleSheet.create({
     covered: glassInput,
     uncovered: glassInput,
     area: glassInput,
+    maps: glassInput,
 
     textArea: {
         ...glassInput,
         height: 110,
-        textAlignVertical: "top",
+        paddingTop: 12,
     },
 
-    /*  PICKER  */
     pickerWrapper: {
-        backgroundColor: "rgba(255,255,255,0.18)",
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.35)",
-        marginBottom: 14,
+        ...glassInput,
         overflow: "hidden",
+        height: 52,
+        justifyContent: "center",
+        paddingHorizontal: 4,
     },
 
     picker: {
         color: "#fff",
     },
 
-    /*  BOTÓN IMÁGENES  */
+        /* ===== BOTÓN IMÁGENES ===== */
     imageButton: {
-        backgroundColor: "#6f2de2",
-        paddingVertical: 12,
-        borderRadius: 12,
+        width: "100%",
+        backgroundColor: "#7b2fe2",
+        paddingVertical: 14,
+        borderRadius: 14,
         alignItems: "center",
-        marginTop: 10,
-        marginBottom: 14,
+        marginTop: 20,
     },
 
     imageButtonText: {
         color: "#fff",
         fontWeight: "600",
         fontSize: 14,
-        letterSpacing: 0.5,
     },
 
-    /*  PREVIEW IMÁGENES  */
+    closeButton: {
+        width: "100%",
+        backgroundColor: "#C21B00",
+        paddingVertical: 14,
+        borderRadius: 14,
+        alignItems: "center",
+        marginTop: 20,
+    },
+
+    closeButtonText: {
+        color: "#fff",
+        fontWeight: "600",
+        fontSize: 14,
+    },
+
+        /* ===== PREVIEW IMÁGENES ===== */
     previewContainer: {
+        gap: 5,
+        alignItems: "center",
+        justifyContent: "center",
         flexDirection: "row",
         flexWrap: "wrap",
-        marginTop: 6,
-        marginBottom: 18,
-    },
+        marginTop: 12,
+        },
 
     preview: {
         width: 82,
         height: 82,
-        borderRadius: 12,
+        borderRadius: 14,
         marginRight: 10,
         marginBottom: 10,
-    },
+        },
 
-    /*  BOTÓN CREAR  */
+        /* ===== BOTONES FINALES ===== */
     create: {
+        width: "100%",
         backgroundColor: "#5a1fdc",
-        paddingVertical: 14,
-        borderRadius: 14,
+        paddingVertical: 15,
+        borderRadius: 16,
         alignItems: "center",
-        marginBottom: 30,
-        shadowColor: "#000",
-        shadowOpacity: 0.35,
-        shadowRadius: 10,
-        elevation: 6,
+        marginTop: 12,
     },
-    });
 
-    /*  ESTILO BASE GLASS REUTILIZABLE  */
-    const glassInput = {
-    width: "100%",
-    height: 48,
-    borderRadius: 18,
-    paddingHorizontal: 18,
-    marginBottom: 14,
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.35)",
-};
+    cancel: {
+        backgroundColor: "rgba(255,255,255,0.12)",
+        paddingVertical: 15,
+        borderRadius: 16,
+        alignItems: "center",
+        marginTop: 12,
+        },
+
+    deletePhoto: {
+        width:25,
+        height:25,
+        textAlign: "center",
+        padding: 4,
+        color: "white",
+        fontSize: 15,
+        fontWeight: "bold",
+        backgroundColor: "red",
+        borderColor: "black",
+        borderRadius: 80,
+        position: "absolute",
+        top: 0,
+        right: 0,
+    }
+});
