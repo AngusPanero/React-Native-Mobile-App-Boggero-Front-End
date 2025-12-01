@@ -19,32 +19,51 @@ const OpenAi = ({ closeModal }) => {
         
     }, [messages])
 
-    const handleSaveMessages = (msg) => {
-        setMessages((prev) => [...prev, msg])
-    }
+const handleMessage = async () => {
+    try {
+        if (!userMessage.trim() || loading) return;
+    
+        setError(false);
+        setLoading(true);
+    
+        const newMessages = [ ...messages, { role: "user", content: userMessage } ];
+    
+        setMessages(newMessages);
+        setUserMessage("");
+    
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/chat`,{ messages: newMessages });
+    
+        const fullText = response.data; 
 
-    const handleMessage = async () => {
-        try {
-            setError(false)
-            setLoading(true)
-
-            handleSaveMessages({ "role": "user", "content": `${userMessage}` })
-            setUserMessage("")
-            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/chat`, {messages})
-
-            handleSaveMessages({ "role": "assistant", "content": `${response.data.reply}` })
-            
-        } catch (error) {
-            setError(true)
-            console.error(`Error al comunicarse con OpenAI: ${error}`);
-            alert(
-                error.response?.message || "Error Interno con AI"
-            );
-        } finally {
-            setLoading(false)
-            setError(false)
+        setMessages((prev) => [...prev,{ role: "assistant", content: "" }]);
+    
+        // tipado letra por letra
+        let index = 0;
+    
+        const typingInterval = setInterval(() => {
+        index++;
+    
+        setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+            role: "assistant",
+            content: fullText.slice(0, index),
+            };
+            return updated;
+        });
+    
+        if (index >= fullText.length) {
+            clearInterval(typingInterval);
+            setLoading(false); 
         }
+        }, 15); 
+    
+    } catch (error) {
+        console.error("Chat error:", error);
+        setError(true);
+        setLoading(false);
     }
+    };
 
         return(
             <>
