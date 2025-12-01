@@ -49,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
       
       <SafeAreaView style={styles.safeArea}>
 
-        <Button title="Admin Test" onPress={() => navigation.navigate("Admin")} />
+        {/* <Button title="Admin Test" onPress={() => navigation.navigate("Admin")} /> */}
 
         <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
           <Image style={styles.logo} source={require("../../assets/boggero.png")} />
@@ -89,8 +89,9 @@ const LoginScreen = ({ navigation }) => {
             </Pressable>
           </View>
         )}
-        <OpenAi />
+        <OpenAi closeModal={() => setModalAi(false)} />
       </SafeAreaView>
+      
       <Footer />
     </View>
   );

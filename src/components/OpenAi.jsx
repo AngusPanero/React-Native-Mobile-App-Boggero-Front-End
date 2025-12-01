@@ -1,9 +1,9 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Pressable, Text, TextInput, ScrollView } from "react-native";
+import { StyleSheet, View, Pressable, Text, TextInput, ScrollView, Image, LayoutAnimation } from "react-native";
 import axios from "axios";
 
-const OpenAi = () => {
+const OpenAi = ({ closeModal }) => {
     const [ modalAi, setModalAi ] = useState(false)
     const [ userMessage, setUserMessage ] = useState("")
     const [ messages, setMessages ] = useState([])
@@ -47,41 +47,55 @@ const OpenAi = () => {
     }
 
         return(
-        <View style={styles.chatBox}>  
-            <Pressable onPress={() => setModalAi(false)} style={styles.closeButton}>
-                    <Text style={styles.closeText}>X</Text>
-            </Pressable> 
+            <>
+            {modalAi ? 
+                (<View style={styles.chatBox}>  
+                <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setModalAi(false)}} style={styles.closeButton}>
+                        <Text style={styles.closeText}>X</Text>
+                </Pressable> 
 
-            <View style={styles.messagesHistory}>
-                <ScrollView ref={scrollViewRef}>
-                {messages.map((msg, index) => {
-                    return msg.role === "user" ? 
+                <View style={styles.messagesHistory}>
+                    <ScrollView ref={scrollViewRef}>
 
-                        (<LinearGradient key={index} colors={["#fbc2eb", "#a18cd1"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageUser}>
-                            <Text style={styles.userText}>{msg.content}</Text>
-                        </LinearGradient>) : 
+                        {messages.map((msg, index) => {
+                        const key = `${msg.role}-${index}`;
 
-                        ( loading ?
+                        if (msg.role === "user") {
+                            return (
+                            <LinearGradient key={key} colors={["#fbc2eb", "#a18cd1"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageUser}>
+                                <Text style={styles.userText}>{msg.content}</Text>
+                            </LinearGradient>
+                            );
+                        }
 
-                        <LinearGradient key={index} colors={["#8e2de2", "#4a00e0"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageBot} >
+                        return (
+                            <LinearGradient key={key} colors={["#8e2de2", "#4a00e0"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageBot} >
+                                <Text style={styles.botText}>💻: {msg.content}</Text>
+                            </LinearGradient>
+                        );
+                        })}
+
+                        {loading && (
+                        <LinearGradient key="thinking" colors={["#8e2de2", "#4a00e0"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageBot} >
                             <Text style={styles.botText}>💻: Pensando...</Text>
-                        </LinearGradient> 
-                        :  
-                        <LinearGradient key={index} colors={["#8e2de2", "#4a00e0"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.messageBot} >
-                            <Text style={styles.botText}>💻: {msg.content}</Text>
                         </LinearGradient>
-                    );
-                })}
-                </ScrollView>
-            </View>
+                        )}
+                    </ScrollView>
+                </View>
 
-            <View style={styles.inputBox}>
-                <TextInput value={userMessage} onChangeText={(text) => setUserMessage(text)} style={styles.input} placeholderTextColor={"white"} placeholder="Preguntale a la IA" />
-                <Pressable onPress={handleMessage} style={styles.sendButton}>
-                    <Text>📨</Text>
-                </Pressable>
-            </View>
-        </View>
+                <View style={styles.inputBox}>
+                    <TextInput value={userMessage} onChangeText={(text) => setUserMessage(text)} style={styles.input} placeholderTextColor={"white"} placeholder="Preguntale a la IA" />
+                    <Pressable onPress={handleMessage} style={styles.sendButton}>
+                        <Text>📨</Text>
+                    </Pressable>
+                </View>
+            </View>) : 
+
+            <Pressable style={styles.gptBox} onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setModalAi(true)}}>
+                <Image style={styles.gpt} source={require("../../assets/gpt.png")} />
+            </Pressable>    
+            }
+        </>
     )
 }
 
@@ -109,6 +123,19 @@ chatBox: {
     shadowOffset: { width: 0, height: 8 },
     elevation: 12,
     },
+
+gpt:{
+    width: 50,     
+    height: 50,
+    zIndex: 10,
+    resizeMode: "contain",
+}, 
+
+gptBox:{
+    position: "absolute",
+    right: 15,
+    bottom: 70,
+},
 
 closeButton: {
     position: "absolute",  
@@ -144,7 +171,7 @@ messageUser: {
 
 userText: {
     color: "#000",
-    fontWeight: "600",
+    fontWeight: "500",
     fontSize: 14,
 },
 

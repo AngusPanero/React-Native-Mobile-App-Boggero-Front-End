@@ -190,6 +190,7 @@ const Admin = ({ navigation }) => {
                 </View>)
             }
             </SafeAreaView>
+            
             <Footer/>  
         </View>
         </>
