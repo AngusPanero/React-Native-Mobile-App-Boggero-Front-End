@@ -6,6 +6,7 @@ import { auth } from "../firebase/firebaseConfig.js";
 import axios from "axios";
 import Footer from "../components/Footer.jsx";
 import Admin from "./Admin.jsx";
+import OpenAi from "../components/OpenAi.jsx";
 
 // Activo Para android que por defecto viene desactivado el UIManager
 if (Platform.OS === "android") {
@@ -47,7 +48,9 @@ const LoginScreen = ({ navigation }) => {
         <ImageBackground source={require("../../assets/cocina-minimalista-2.avif")} style={styles.background} resizeMode="cover" />
       
       <SafeAreaView style={styles.safeArea}>
-      <Button title="Admin Test" onPress={() => navigation.navigate("Admin")} />
+
+        <Button title="Admin Test" onPress={() => navigation.navigate("Admin")} />
+
         <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setIsAdmin(false) }}>
           <Image style={styles.logo} source={require("../../assets/boggero.png")} />
         </Pressable>
@@ -86,6 +89,7 @@ const LoginScreen = ({ navigation }) => {
             </Pressable>
           </View>
         )}
+        <OpenAi />
       </SafeAreaView>
       <Footer />
     </View>
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 14,
   
-    backgroundColor: "rgba(255,255,255,0.55)",
+    backgroundColor: "rgba(255,255,255,0.65)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.65)",
   
@@ -161,8 +165,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     width: "100%",
     color: "#fff",  
-    fontSize: 15,
-    fontWeight: "500",
+    fontSize: 17,
+    fontWeight: "bold",
     letterSpacing: 1,
     textTransform: "uppercase",
   },
@@ -183,11 +187,12 @@ const styles = StyleSheet.create({
     height: 46,
     borderRadius: 10,
     paddingHorizontal: 14,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0,0,0,0.55)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.35)",
+    borderColor: "rgba(255,255,255,0.55)",
     color: "#fff",
     fontSize: 14,
+    fontWeight: "bold"
   },
   
   backText: {

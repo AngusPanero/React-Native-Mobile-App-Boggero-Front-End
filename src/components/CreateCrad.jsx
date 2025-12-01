@@ -12,16 +12,16 @@ const CreateCard = ({ houses, handleSetValues, pickImages, deleteImages, closeMo
 
                 <View style={styles.pickerWrapper}>
                     <Picker selectedValue={houses.operation} onValueChange={(value) => handleSetValues("operation", value)} style={styles.picker}>
-                        <Picker.Item label="-- Operación --" value="" />
-                        <Picker.Item label="Venta" value="venta" />
-                        <Picker.Item label="Alquiler" value="alquiler" />
+                        <Picker.Item color="white" label="-- Deslizar --" value="" />
+                        <Picker.Item color="white" label="Venta" value="venta" />
+                        <Picker.Item color="white" label="Alquiler" value="alquiler" />
                     </Picker>
                 </View>
 
                 <TextInput style={styles.price} placeholder="Precio" placeholderTextColor={"#ddd"} value={houses.price} onChangeText={(text) => handleSetValues("price", text)} />
                 <TextInput style={styles.typeOfHouse} placeholder="Tipo de Casa" placeholderTextColor={"#ddd"} value={houses.typeOfHouse} onChangeText={(text) => handleSetValues("typeOfHouse", text)} />
 
-                <TextInput style={styles.textArea} placeholder="Descripción" value={houses.description} onChangeText={(text) => handleSetValues("description", text)} multiline numberOfLines={4} textAlignVertical="top" />    
+                <TextInput style={styles.textArea} placeholder="Descripción" placeholderTextColor="white" value={houses.description} onChangeText={(text) => handleSetValues("description", text)} multiline numberOfLines={4} textAlignVertical="top" />    
 
                 <TextInput style={styles.condition} placeholder="Condición" placeholderTextColor={"#ddd"} value={houses.condition} onChangeText={(text) => handleSetValues("condition", text)} />    
                 <TextInput style={styles.ambients} placeholder="Ambientes" placeholderTextColor={"#ddd"} value={houses.ambients} onChangeText={(text) => handleSetValues("ambients", text)} />    
@@ -68,14 +68,16 @@ export default CreateCard
 
 const glassInput = {
     width: "100%",
+    fontWeight: "500",
+    fontSize: "18",
     height: 48,
     borderRadius: 16,
     paddingHorizontal: 16,
     marginBottom: 14,
     color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "rgba(255,255,255,.08)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: "rgba(255,255,255,.3)",
 };
 
 const styles = StyleSheet.create({
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         alignItems: "center",
         width: "90%",
-        backgroundColor: "rgba(0,0,0,0.35)",
+        backgroundColor: "rgba(128, 118, 114,0.75)",
         borderRadius: 26,
         padding: 20,
         borderWidth: 1,
